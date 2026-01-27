@@ -1,11 +1,15 @@
 
 import {  z } from "zod"
+import { Role } from "../prisma/generated/prisma/enums"
+
+
+
 
 export const SignupSchema = z.object({
     email : z.email(),
     password : z.string().min(6,{message : "too short"}).max(20,{message : "too large"}),
     name : z.string().min(3,{message : "too short"}).max(18, {message : "too large"}),
-    role : z.enum(["Instructor", "Student"]),
+    role : z.enum(Role),
 })
 
 export const LoginSchema = z.object({
