@@ -24,7 +24,7 @@ model User{
   email       String    @unique
   password    String  
   name        String 
-  role        Role
+  role        Role 
   createdAt   DateTime    @default(now())
   Course      Course[]
   purchases   Purchase[]

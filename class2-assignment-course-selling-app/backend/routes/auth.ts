@@ -66,7 +66,8 @@ router.post("/login",async (req,res)=>{
             })
         }
         const token = jwt.sign({
-            id : isUser.id
+            id : isUser.id,
+            role : isUser.role
         }, process.env.JWT_SECRET!)
         res.status(200).json({
             token : token
@@ -79,6 +80,7 @@ router.post("/login",async (req,res)=>{
 })
 
 router.get("/getId",UserMiddleware, (req,res)=>{
+    console.log(req.userId)
     res.send(req.userId)
 })
 export const auth = router
