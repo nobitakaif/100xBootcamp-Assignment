@@ -18,35 +18,31 @@ router.post("/create",UserMiddleware, async(req,res)=>{
         return 
     }
     try{
-        // const isInstructor = await prisma.user.findFirst({
-        //     where : {
-        //         id : userId
-        //     }
-        // })
         console.log("role of the creator : ", req.role)
         if(req.role == "Instructor"){
             const isCreated = await prisma.course.create({
-            data :{
-                instructorId : userId!,
-                description : body.data.description,
-                title : body.data.title,
-                price : body.data.price,
-                lesson : {
-                    create : {
-                        content : body.data.content,
-                        title : body.data.lesson
+                data :{
+                    instructorId : userId!,
+                    description : body.data.description,
+                    title : body.data.title,
+                    price : body.data.price,
+                    lesson : {
+                        create : {
+                            content : body.data.content,
+                            title : body.data.lesson
+                        }
                     }
                 }
+            })
+            if(!isCreated.id){
+                res.send("course is not created")
+                return 
             }
-        })
-        if(!isCreated.id){
-            res.send("course is not created")
+            res.status(200).json({
+                msg : "course is succeffully created ",
+                courseId : isCreated.id
+            })
             return 
-        }
-        res.status(200).json({
-            msg : "course is succeffully created ",
-            courseId : isCreated.id
-        })
         }
             res.status(403).json({
                 msg : "access denied"
@@ -65,24 +61,96 @@ router.post("/create",UserMiddleware, async(req,res)=>{
 
 router.get("/courses",async(req,res)=>{
     // get all course public router
+    const allCourses = await prisma.course.findMany({
+        orderBy : {
+            createdAt : "asc"
+        }
+    })
+    if(!allCourses){
+        res.status(404).json({
+            msg : "something  happens wrong!!"
+        })
+    }
     res.status(200).json({
-        courses : "list of course id and some details"
+        course : allCourses
     })
 })
 
+// all lesson of that specific courseId 
 router.get("/courses/:id",async(req,res)=>{
     // get the individual course with lesson
+
+    const lesson = await prisma.lesson.findMany({
+        where : {
+            courseId : req.params.id
+        }
+    })
+    if(!lesson){
+        res.status(404).json({
+            msg : "no course present "
+        })
+    }
+    
     res.status(200).json({
-        lesson : "send all the lesson of given course id in params"
+        msg : lesson
     })
 })
 
+// update the lesson by course id 
 router.patch("/courses/:id",UserMiddleware,async(req,res)=>{
     // get the individual course with lesson
     // only instructor can update the lesson of course
-    res.status(200).json({
-        msg : "lesson is updated"
-    })
+    if(req.role!="Instructor"){
+        res.status(403).json({
+            msg : "access denied"
+        })
+        return 
+    }
+    try{
+        const courseId = Array.isArray(req.params.id)
+                ? req.params.id[0]
+                : req.params.id
+        if(!courseId){
+            res.status(411).json({
+                msg : "pls give valid courseId"
+            })
+            return 
+        }
+        
+        const isCreator = await prisma.course.findFirst({
+            where : {
+                id : courseId,
+                instructorId : req.userId!
+            }
+        })
+        if(!isCreator){
+            res.status(403).json({
+                msg : "Access denied"
+            })
+            return 
+        }
+        
+        const resposne  = await prisma.lesson.update({
+            where : {
+                courseId : courseId
+            },
+            data :{
+                title : req.body.title,
+                content : req.body.content,
+            }
+        })
+        console.log("conrole reached here")
+        res.status(200).json({
+            msg : "course is updated",
+            time : resposne.updatedAt,
+            id : resposne.id
+        })
+    }catch(e){
+        res.status(500).json({
+            msg :"something happen wrong, pls try again"
+        })
+        return 
+    }
 })
 
 router.delete("/delete/:id", UserMiddleware, async(req,res)=>{

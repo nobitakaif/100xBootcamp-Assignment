@@ -12,7 +12,7 @@ export const UserMiddleware = async(req:Request, res: Response, next: NextFuncti
     }
     // console.log(bearerToken)
     const token = bearerToken.split(" ")[1]
-    console.log("brear token :  ",token)
+    // console.log("brear token :  ",token)
     if(!token){
         res.status(403).json({
             msg : "token is missing"
@@ -25,7 +25,7 @@ export const UserMiddleware = async(req:Request, res: Response, next: NextFuncti
     }
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
     if(decodedToken){
-        console.log("decoded token",decodedToken)
+        // console.log("decoded token",decodedToken)
         req.userId = decodedToken.id as string
         req.role = decodedToken.role
         next()

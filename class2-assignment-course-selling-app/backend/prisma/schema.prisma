@@ -35,7 +35,7 @@ model Course{
   title         String
   description   String
   price         Int
-  instructorId  String
+  instructorId  String 
   instructor    User @relation(fields: [instructorId], references: [id])
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -44,12 +44,13 @@ model Course{
 }
 
 model Lesson{
-  id          String    @id   @default(uuid())
+  id          String    @id   @default(uuid()) 
   title       String
   content     String
   course      Course  @relation(fields: [courseId], references: [id])
-  courseId    String
+  courseId    String  @unique
   createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model Purchase{
