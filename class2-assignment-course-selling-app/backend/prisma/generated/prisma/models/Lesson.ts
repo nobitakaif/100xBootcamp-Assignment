@@ -205,16 +205,16 @@ export type LessonOrderByWithRelationInput = {
 
 export type LessonWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  courseId?: string
   AND?: Prisma.LessonWhereInput | Prisma.LessonWhereInput[]
   OR?: Prisma.LessonWhereInput[]
   NOT?: Prisma.LessonWhereInput | Prisma.LessonWhereInput[]
   title?: Prisma.StringFilter<"Lesson"> | string
   content?: Prisma.StringFilter<"Lesson"> | string
+  courseId?: Prisma.StringFilter<"Lesson"> | string
   createdAt?: Prisma.DateTimeFilter<"Lesson"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Lesson"> | Date | string
   course?: Prisma.XOR<Prisma.CourseScalarRelationFilter, Prisma.CourseWhereInput>
-}, "id" | "courseId">
+}, "id">
 
 export type LessonOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

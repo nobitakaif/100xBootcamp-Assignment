@@ -89,6 +89,7 @@ router.get("/courses/:id",async(req,res)=>{
         res.status(404).json({
             msg : "no course present "
         })
+        return 
     }
     
     res.status(200).json({
@@ -153,12 +154,43 @@ router.patch("/courses/:id",UserMiddleware,async(req,res)=>{
     }
 })
 
+// delete lesson
+router.delete("/delete/lesson/:lessonId", UserMiddleware, async(req,res)=>{
+    // only instructor can delete the course id 
+    const lessonId = Array.isArray(req.params.lessonId) ? req.params.lessonId[0] : req.params.lessonId
+    if(req.role !== "Instructor"){
+        res.status(403).json({
+            msg : "you're not Instructor"
+        })
+        return 
+    }
+    try{       
+        
+        const courseId = await prisma.lesson.delete({
+            where : {
+                id : lessonId
+            }
+        })
+
+        res.status(200).json({
+            msg : "lesson is deleted",
+            lesson : courseId.id
+        })
+        return 
+        
+    }catch(e){
+        res.status(500).json({
+            msg : "something happens wrong "
+        })
+    }
+})
+
+// delete course 
 router.delete("/delete/:id", UserMiddleware, async(req,res)=>{
     // only instructor can delete the course id 
     res.status(200).json({
         id : "course.id is deleted "
     })
 })
-
 
 export const course = router

@@ -48,7 +48,7 @@ model Lesson{
   title       String
   content     String
   course      Course  @relation(fields: [courseId], references: [id])
-  courseId    String  @unique
+  courseId    String  
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
