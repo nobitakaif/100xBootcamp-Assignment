@@ -2,12 +2,14 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import {generateMnemonic, mnemonicToSeedSync} from "bip39"
-import { div } from "motion/react-client";
+import { Copy } from "lucide-react";
 
 export default function Hero() {
   const [clicked, setClicked] = useState(false);
   const [button, setButton ] = useState(false)
   const [seed, setSeed] = useState<string[] | null>(null);
+  const [isCopy, setIsCopy] = useState(false)
+  const [isImported, setIsImported] = useState(false)
 
   function generateSeed(){
     const newSeed = generateMnemonic()
@@ -71,16 +73,30 @@ export default function Hero() {
           <AnimatePresence >
             {!button && (
               <motion.button
-                className="px-6 py-3 rounded-lg border border-white cursor-not-allowed  boder text-black"
+                className="px-6 py-3 rounded-lg border border-white  boder text-black "
                 initial = {{scale : 1, opacity : 1}}
                 exit={{scale : 15, opacity : 0, y : -200}}
                 animate ={{transition : {duration : 50000, ease : "easeInOut"} }}
+                onClick={()=>{
+                  setIsImported(true)
+                  setClicked(true)
+                }}
               >
                 Import Seed
               </motion.button>
             )}
+           
           </AnimatePresence>
-        </div>
+          
+      </div>
+             <div className="grid grid-cols-3">
+            {clicked && Array.from({length:12}).map((el,idx)=>(
+              <input placeholder="enter you seed here" key={idx}>
+                
+              </input>
+              
+            ))}
+           </div>
         
          {seed ? <div className="grid grid-cols-3 gap-3">
             {seed.map((s, index) =>(
@@ -89,7 +105,20 @@ export default function Hero() {
             </motion.button>
           ))} 
           </div>: ""}
-
+          
+        {seed && <motion.button 
+          className="px-4 bg-white rounded-lg border h-10 font-semibold cursor-pointer flex gap-3 items-center justify-center"
+          onClick={()=>{
+            navigator.clipboard.writeText(JSON.stringify(seed,null, 2))
+            setIsCopy(true)
+            setTimeout(()=>{
+              setIsCopy(false)
+            },5000)
+          }}
+        >
+            {isCopy ? "Copied" : "Copy"}
+            
+        </motion.button>}
       </div>
     </div>
   );
