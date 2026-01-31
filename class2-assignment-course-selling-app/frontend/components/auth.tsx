@@ -44,7 +44,7 @@ export default function Login (){
     
     type SingupSchemaData = z.infer<typeof SingupSchema>
     const onSubmit:SubmitHandler<SingupSchemaData> = async (data: z.infer<typeof SingupSchema>)=>{
-        alert("alrgoih")
+        // alert("")
         if(isLogin){
             const response = await axios.post("http://localhost:8000/auth/signup",{
                 email : data.email,
@@ -53,10 +53,10 @@ export default function Login (){
                 role : "Student"
             })    
              if(response.data.id){
-            toast.success(`you id ${response.data.id}`)
-            // localStorage.setItem("token",response.data.id)
-            return response.data.id
-        }
+                toast.success(`you're are signed up`)
+                setIsLoggin(true)
+                return
+            }
         }
         const response = await axios.post("http://localhost:8000/auth/login",{
             email : data.email,
